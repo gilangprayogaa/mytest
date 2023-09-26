@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Produk</title>
+    <script>
+        function konfirmasiHapus(id) {
+            if (confirm('Anda yakin ingin menghapus produk ini?')) {
+                // Jika pengguna menekan OK dalam dialog konfirmasi, lanjutkan dengan penghapusan
+                hapusProduk(id);
+            }
+        }
+    
+        function hapusProduk(id) {
+            // Kirim permintaan HTTP DELETE ke server
+            fetch(`/hapus/${id}`, {
+                method: 'DELETE',
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Jika penghapusan berhasil, hapus baris dari tabel
+                    const row = document.querySelector(`[data-id="${id}"]`);
+                    row.remove();
+                } else {
+                    alert('Gagal menghapus produk.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+    
+</head>
+<body>
+    <h1>Data Produk</h1>
+    <a href="{{ url_for('data_dijual') }}"> Data yang bisa dijual </a>
+    <a href="{{ url_for('tambah_produk') }}">Tambah</a>
+    <table>
+        <thead>
+            <tr>
+                <th hidden>ID Produk</th>
+                <th>Nama Produk</th>
+                <th>Harga</th>
+                <th>Kategori</th>
+                <th>Status</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data %}
+                <tr>
+                    <td hidden>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                    <td>{{ row[4] }}</td>
+                    <td>
+                        <a href="http://localhost:5000/edit/{{row[0]}}">Edit</a>
+                        |
+                        <a href="#" onclick="konfirmasiHapus({{ row[0] }});">Hapus</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
